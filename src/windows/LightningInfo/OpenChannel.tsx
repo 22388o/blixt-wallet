@@ -13,6 +13,7 @@ import useBalance from "../../hooks/useBalance";
 import { RouteProp } from "@react-navigation/native";
 import { toast } from "../../utils";
 import useFormatBitcoinValue from "../../hooks/useFormatBitcoinValue";
+import { PLATFORM } from "../../utils/constants";
 
 export interface IOpenChannelProps {
   navigation: StackNavigationProp<LightningInfoStackParamList, "OpenChannel">;
@@ -92,22 +93,24 @@ export default function OpenChannel({ navigation, route }: IOpenChannelProps) {
           title: `Fee-rate`,
           component: (
             <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingRight: 5 }}>
-              <Slider
-                ref={slider}
-                style={{
-                  width: 185,
-                  height: 25,
-                  marginTop: 10,
-                  marginBottom: 10,
-                }}
-                onValueChange={setFeeRate}
-                minimumValue={0}
-                maximumValue={500}
-                step={1}
-                thumbTintColor={blixtTheme.primary}
-                minimumTrackTintColor={blixtTheme.lightGray}
-                maximumTrackTintColor={blixtTheme.lightGray}
-              />
+              {PLATFORM !== "macos" && (
+                <Slider
+                  ref={slider}
+                  style={{
+                    width: 185,
+                    height: 25,
+                    marginTop: 10,
+                    marginBottom: 10,
+                  }}
+                  onValueChange={setFeeRate}
+                  minimumValue={0}
+                  maximumValue={500}
+                  step={1}
+                  thumbTintColor={blixtTheme.primary}
+                  minimumTrackTintColor={blixtTheme.lightGray}
+                  maximumTrackTintColor={blixtTheme.lightGray}
+                />
+              )}
               <TextInput
                 keyboardType="numeric"
                 returnKeyType="done"

@@ -55,7 +55,7 @@ export default function LndMobileHelpCenter({ navigation }) {
     steps.push({
       title: "Check LndMobileService process exist",
       async exec () {
-        if (PLATFORM === "ios") {
+        if (PLATFORM === "ios" || PLATFORM === "macos") {
           return true;
         }
         const r = await NativeModules.LndMobileTools.checkLndProcessExist();
@@ -80,7 +80,7 @@ export default function LndMobileHelpCenter({ navigation }) {
     {
       title: "Ping LndMobileService",
       async exec () {
-        if (PLATFORM === "ios") {
+        if (PLATFORM === "ios" || PLATFORM === "macos") {
           return true;
         }
         const r = await NativeModules.LndMobile.sendPongToLndMobileservice();

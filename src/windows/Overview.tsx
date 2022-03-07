@@ -192,8 +192,11 @@ function Overview({ navigation }: IOverviewProps) {
   const bitcoinBalance = formatBitcoin(balance, bitcoinUnit, false);
   const fiatBalance = convertBitcoinToFiat(balance, currentRate, fiatUnit);
 
+
+  const HeaderView = PLATFORM === "macos" ? View : LinearGradient;
+
   return (
-    <Container>
+    <Container style={{ flexDirection: "row" }}>
       <StatusBar
         barStyle="light-content"
         hidden={false}
@@ -201,6 +204,11 @@ function Overview({ navigation }: IOverviewProps) {
         animated={false}
         translucent={true}
       />
+      {PLATFORM === "macos" &&
+        <View style={{ width: 330 }}>
+          <Drawer />
+        </View>
+      }
       <View style={style.overview}>
         <ScrollView
           contentContainerStyle={style.transactionList}
@@ -235,12 +243,12 @@ function Overview({ navigation }: IOverviewProps) {
           {txs}
         </ScrollView>
         <Animated.View style={[style.animatedTop,{ height: headerHeight }]} pointerEvents="box-none">
-          <LinearGradient style={style.top} colors={Chain === "mainnet" ? [blixtTheme.secondary, blixtTheme.primary] : [blixtTheme.lightGray, Color(blixtTheme.lightGray).darken(0.30).hex()]} pointerEvents="box-none">
+          <HeaderView style={[style.top, { backgroundColor: blixtTheme.primary }]} colors={Chain === "mainnet" ? [blixtTheme.secondary, blixtTheme.primary] : [blixtTheme.lightGray, Color(blixtTheme.lightGray).darken(0.30).hex()]} pointerEvents="box-none">
             <View style={StyleSheet.absoluteFill}>
               {/* <AnimatedIcon
                 style={[style.onchainIcon, { opacity: iconOpacity }]} type="FontAwesome" name="btc" onPress={() => navigation.navigate("OnChain")}
               /> */}
-              {layoutMode === "mobile" && (
+              {(layoutMode === "mobile" && PLATFORM !== "macos") && (
                 <AnimatedIcon
                   style={[style.menuIcon]} type="Entypo" name="menu" onPress={() => navigation.dispatch(DrawerActions.toggleDrawer)}
                 />
@@ -304,7 +312,7 @@ function Overview({ navigation }: IOverviewProps) {
                 {preferFiat && <>({convertBitcoinToFiat(pendingOpenBalance, currentRate, fiatUnit)} pending)</>}
               </Animated.Text>
             }
-          </LinearGradient>
+          </HeaderView>
         </Animated.View>
       </View>
     </Container>
@@ -558,12 +566,11 @@ export function OverviewTabsComponent() {
   return (
     <OverviewTabs.Navigator screenOptions={{
       header: () => null,
-    }} tabBar={() => layoutMode === "mobile" ? <FooterNav /> : <></>}>
+    }} tabBar={() => layoutMode === "mobile" && PLATFORM !== "macos" ? <FooterNav /> : <></>}>
       <OverviewTabs.Screen name="Overview" component={Overview} />
     </OverviewTabs.Navigator>
   );
 };
-
 
 const DrawerNav = createDrawerNavigator();
 
@@ -585,4 +592,4 @@ export function DrawerComponent() {
     </DrawerNav.Navigator>
   )
 }
-export default DrawerComponent;
+export default PLATFORM === "macos" ? OverviewTabsComponent : DrawerComponent;

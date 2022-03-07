@@ -11,6 +11,7 @@ import useEvaluateLightningCode from "../hooks/useEvaluateLightningCode";
 import { fontFactorNormalized } from "../utils/scale";
 import useLayoutMode from "../hooks/useLayoutMode";
 import { useStoreState } from "../state/store";
+import { PLATFORM } from "../utils/constants";
 
 export default function Drawer() {
   const navigation = useNavigation();
@@ -22,7 +23,9 @@ export default function Drawer() {
   const syncedToChain = useStoreState((store) => store.lightning.syncedToChain);
 
   const closeDrawer = () => {
-    navigation.dispatch(DrawerActions.closeDrawer);
+    if (PLATFORM !== "macos") {
+      navigation.dispatch(DrawerActions.closeDrawer);
+    }
     setExpandAdvanced(false);
   };
 
@@ -32,11 +35,15 @@ export default function Drawer() {
   };
 
   const sendToLightningAddress = async () => {
-    navigation.dispatch(DrawerActions.closeDrawer);
+    if (PLATFORM !== "macos") {
+      navigation.dispatch(DrawerActions.closeDrawer);
+    }
     if ((await promptLightningAddress())[0]) {
       navigation.navigate("LNURL", { screen: "PayRequest" });
     } else {
-      navigation.dispatch(DrawerActions.openDrawer);
+      if (PLATFORM !== "macos") {
+        navigation.dispatch(DrawerActions.openDrawer);
+      }
     }
   };
 
@@ -96,14 +103,16 @@ export default function Drawer() {
           }, style.statusIndicator]}></View>
         </View>
         <View style={style.menu}>
-          {layoutMode === "full" && (
+          {(layoutMode === "full" || PLATFORM === "macos") && (
             <>
-              <TouchableOpacity onPress={() => goToScreen("Send")}>
-                <View style={style.menuItem}>
-                  <Icon style={style.menuItemIcon} type="AntDesign" name="camerao" />
-                  <Text style={style.menuItemText}>Scan</Text>
-                </View>
-              </TouchableOpacity>
+              {PLATFORM !== "macos" &&
+                <TouchableOpacity onPress={() => goToScreen("Send")}>
+                  <View style={style.menuItem}>
+                    <Icon style={style.menuItemIcon} type="AntDesign" name="camerao" />
+                    <Text style={style.menuItemText}>Scan</Text>
+                  </View>
+                </TouchableOpacity>
+              }
               <TouchableOpacity onPress={() => goToScreen("Receive")}>
                 <View style={style.menuItem}>
                   <Icon style={style.menuItemIcon} type="AntDesign" name="qrcode" />
@@ -134,12 +143,14 @@ export default function Drawer() {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={goToLightningBrowser}>
-            <View style={style.menuItem}>
-              <Icon style={style.menuItemIcon} type="MaterialCommunityIcons" name="web" />
-              <Text style={style.menuItemText}>Lightning Browser</Text>
-            </View>
-          </TouchableOpacity>
+          {PLATFORM !== "macos" &&
+            <TouchableOpacity onPress={goToLightningBrowser}>
+              <View style={style.menuItem}>
+                <Icon style={style.menuItemIcon} type="MaterialCommunityIcons" name="web" />
+                <Text style={style.menuItemText}>Lightning Browser</Text>
+              </View>
+            </TouchableOpacity>
+          }
 
           <TouchableOpacity onPress={() => goToScreen("OnChain")}>
             <View style={style.menuItem}>

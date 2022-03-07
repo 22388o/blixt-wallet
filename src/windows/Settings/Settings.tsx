@@ -3,7 +3,6 @@ import { StyleSheet, NativeModules, PermissionsAndroid, Linking, Platform } from
 import Clipboard from "@react-native-community/clipboard";
 import DocumentPicker from "react-native-document-picker";
 import { readFile } from "react-native-fs";
-import ReactNativePermissions from 'react-native-permissions';
 import { CheckBox, Body, Container, Icon, Text, Left, List, ListItem, Right } from "native-base";
 import DialogAndroid from "react-native-dialogs";
 import { fromUnixTime } from "date-fns";
@@ -25,6 +24,11 @@ import BlixtWallet from "../../components/BlixtWallet";
 import { Alert } from "../../utils/alert";
 import { Chain } from "../../utils/build";
 import { getNodeInfo } from "../../lndmobile";
+
+let ReactNativePermissions: any;
+if (PLATFORM !== "macos") {
+  ReactNativePermissions = require("react-native-permissions");
+}
 
 interface ISettingsProps {
   navigation: StackNavigationProp<SettingsStackParamList, "Settings">;
@@ -1006,7 +1010,7 @@ Do you wish to proceed?`;
               }
             </>
           }
-          {["android", "ios"].includes(PLATFORM) &&
+          {["android", "ios", "macos"].includes(PLATFORM) &&
             <ListItem style={style.listItem} icon={true} onPress={onExportChannelsPress}>
               <Left><Icon style={style.icon} type="MaterialIcons" name="save" /></Left>
               <Body>

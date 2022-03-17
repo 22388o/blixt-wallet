@@ -12,6 +12,7 @@ import { fontFactorNormalized } from "../utils/scale";
 import useLayoutMode from "../hooks/useLayoutMode";
 import { useStoreState } from "../state/store";
 import { PLATFORM } from "../utils/constants";
+import { getStatusBarHeight } from "react-native-status-bar-height";
 
 export default function Drawer() {
   const navigation = useNavigation();
@@ -95,12 +96,12 @@ export default function Drawer() {
   return (
     <View style={style.drawerContainer}>
       <ScrollView style={style.drawerScroll} alwaysBounceVertical={false}>
-        <View style={style.logoContainer}>
-          <BlixtLogo />
-          <Text style={style.blixtTitle} onPress={() => goToScreen("SyncInfo", undefined, false)}>Blixt Wallet</Text>
           <View style={[{
             backgroundColor: statusIndicatorColor,
           }, style.statusIndicator]}></View>
+        <View style={style.logoContainer}>
+          <BlixtLogo />
+          <Text style={style.blixtTitle} onPress={() => goToScreen("SyncInfo", undefined, false)}>Blixt Wallet</Text>
         </View>
         <View style={style.menu}>
           {(layoutMode === "full" || PLATFORM === "macos") && (
@@ -124,7 +125,7 @@ export default function Drawer() {
 
           <TouchableOpacity onPress={pasteFromClipboard}>
             <View style={style.menuItem}>
-              <Icon style={style.menuItemIcon} type="FontAwesome5" name="paste" />
+              <Icon style={style.menuItemIcon} type={PLATFORM === "macos" ? "FontAwesome" : "FontAwesome5"} name="paste" />
               <Text style={style.menuItemText}>Paste from Clipboard</Text>
             </View>
           </TouchableOpacity>
@@ -198,9 +199,9 @@ const style = StyleSheet.create({
   },
   drawerScroll: {
     flex: 1,
-    paddingTop: 34,
   },
   logoContainer: {
+    marginTop: PLATFORM === "macos" ? 17 : 34,
     paddingTop: 22,
     paddingBottom: 10,
     alignItems: "center",
@@ -218,7 +219,7 @@ const style = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: blixtTheme.gray,
-    paddingVertical: 11,
+    paddingVertical: 10,
     paddingHorizontal: 13,
     marginHorizontal: 19,
     marginBottom: 11,
@@ -268,7 +269,7 @@ const style = StyleSheet.create({
     height: 7,
     borderRadius: 8,
     position: "absolute",
-    top: 17,
+    top: 16 + getStatusBarHeight(),
     right: 18,
   }
 });

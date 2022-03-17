@@ -13,6 +13,7 @@ import { parseBech32, toast } from "../../utils";
 import { BitcoinUnits, convertBitcoinUnit } from "../../utils/bitcoin-units";
 import useBalance from "../../hooks/useBalance";
 import useFormatBitcoinValue from "../../hooks/useFormatBitcoinValue";
+import { PLATFORM } from "../../utils/constants";
 
 export interface IOpenChannelProps {
   navigation: StackNavigationProp<OnChainStackParamList, "Withdraw">;
@@ -155,22 +156,24 @@ export default ({ navigation }: IOpenChannelProps) => {
           title: `Fee-rate`,
           component: (
             <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingRight: 5 }}>
-              <Slider
-                ref={slider}
-                style={{
-                  width: 185,
-                  height: 25,
-                  marginTop: 10,
-                  marginBottom: 10,
-                }}
-                onValueChange={setFeeRate}
-                minimumValue={0}
-                maximumValue={500}
-                step={1}
-                thumbTintColor={blixtTheme.primary}
-                minimumTrackTintColor={blixtTheme.lightGray}
-                maximumTrackTintColor={blixtTheme.lightGray}
-              />
+              {PLATFORM !== "macos" && (
+                <Slider
+                  ref={slider}
+                  style={{
+                    width: 185,
+                    height: 25,
+                    marginTop: 10,
+                    marginBottom: 10,
+                  }}
+                  onValueChange={setFeeRate}
+                  minimumValue={0}
+                  maximumValue={500}
+                  step={1}
+                  thumbTintColor={blixtTheme.primary}
+                  minimumTrackTintColor={blixtTheme.lightGray}
+                  maximumTrackTintColor={blixtTheme.lightGray}
+                />
+              )}
               <TextInput
                 keyboardType="numeric"
                 returnKeyType="done"
@@ -217,5 +220,6 @@ const style = StyleSheet.create({
     fontSize: 15,
     padding: 0,
     color: blixtTheme.light,
+    flex: 1,
   },
 });
